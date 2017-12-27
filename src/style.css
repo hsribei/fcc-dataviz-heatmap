@@ -1,3 +1,10 @@
 body {
   background-color: #333;
 }
+
+.centered {
+  height: 95vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
