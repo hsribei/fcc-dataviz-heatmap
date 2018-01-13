@@ -47,6 +47,13 @@ function makeHeatMap(fullData): void {
   normalizeVariance.domain(d3.extent(data, d => d.variance));
   const color = d => heatMapColorforValue(normalizeVariance(d.variance));
 
+  // Define the div for the tooltip
+  var div = d3
+    .select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
   // Get the bands together! (Draw rectangles)
   const xBand = d3.scaleBand().range([0, width]);
   xBand.domain(Array.from(new Set(data.map(d => d.year))));
@@ -85,7 +92,30 @@ function makeHeatMap(fullData): void {
     .attr("y", d => yBand(monthNames[d.month - 1]))
     .attr("width", xBand.bandwidth())
     .attr("height", yBand.bandwidth())
-    .style("fill", d => color(d));
+    .style("fill", d => color(d))
+    .on("mouseover", d => {
+      div
+        .transition()
+        .duration(200)
+        .style("opacity", 0.95);
+      div
+        .html(
+          `
+              ${monthNames[d.month - 1]}, ${d.year}<br/>
+              <br/>
+              Temp.: ${fullData.baseTemperature + d.variance}&nbsp;°C<br/>
+              Variance: ${d.variance}&nbsp;°C
+          `
+        )
+        .style("left", d3.event.pageX + 12 + "px")
+        .style("top", d3.event.pageY + "px");
+    })
+    .on("mouseout", d => {
+      div
+        .transition()
+        .duration(200)
+        .style("opacity", 0);
+    });
 
   // Add the X Axis
   const xTime = d3.scaleTime().range([0, width]);

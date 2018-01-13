@@ -17,3 +17,16 @@ body {
 h1 {
   text-align: center;
 }
+
+div.tooltip {
+  position: absolute;
+  text-align: left;
+  padding: 0.5em;
+  font-size: 12px;
+  font-family: sans-serif;
+  background: lightgray;
+  color: black;
+  border: 0px;
+  border-radius: 1px;
+  pointer-events: none;
+}
