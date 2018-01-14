@@ -1,6 +1,6 @@
 body {
   background-color: #333;
-  color: white;
+  font-family: sans-serif;
 }
 
 .centered {
@@ -10,12 +10,29 @@ body {
   align-items: center;
 }
 
-#d3 {
+.content {
   background-color: lightgray;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 h1 {
+  margin-bottom: 0.2rem;
+}
+
+h2 {
+  color: #555;
+  margin-top: 0px;
+  margin-bottom: 0.2rem;
+}
+
+p {
+  font-size: 12px;
   text-align: center;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 
 div.tooltip {

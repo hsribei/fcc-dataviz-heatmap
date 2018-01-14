@@ -9,7 +9,7 @@ function heatMapColorforValue(value) {
 
 function makeHeatMap(fullData): void {
   const data = fullData.monthlyVariance;
-  const margin = { top: 20, right: 20, bottom: 20, left: 100 },
+  const margin = { top: 10, right: 100, bottom: 100, left: 100 },
     totalWidth = 1240,
     totalHeight = 400,
     width = totalWidth - margin.left - margin.right,
@@ -125,14 +125,88 @@ function makeHeatMap(fullData): void {
     .append("g")
     .attr("class", "x axis")
     .attr("transform", "translate(0," + height + ")")
-    .call(xAxis);
+    .call(xAxis)
+    .append("text")
+    .attr("y", 50)
+    .attr("x", 525)
+    .style("text-anchor", "end")
+    .style("fill", "black")
+    .style("font-size", "18px")
+    .text("Years");
 
   // Add the Y Axis
   const yAxis = d3.axisLeft(yBand);
   svg
     .append("g")
+    .attr("id", "y-axis-left")
     .attr("class", "y axis")
-    .call(yAxis);
+    .call(yAxis)
+    .append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", -60)
+    .attr("x", -100)
+    .style("text-anchor", "end")
+    .style("fill", "black")
+    .style("font-size", "18px")
+    .text("Months");
+  const yAxisRight = d3.axisRight(yBand);
+  svg
+    .append("g")
+    .attr("id", "y-axis-right")
+    .attr("class", "y axis")
+    .attr("transform", `translate(${width}, 0)`)
+    .call(yAxisRight)
+    .append("text")
+    .attr("transform", "rotate(90)")
+    .attr("y", -60)
+    .attr("x", 160)
+    .style("text-anchor", "end")
+    .style("fill", "black")
+    .style("font-size", "18px")
+    .text("Months");
+
+  // Add legend
+  const legendWidth = xBand.bandwidth() * 40;
+  const legendHeight = yBand.bandwidth();
+  const defs = svg.append("defs");
+  const linearGradient = defs
+    .append("linearGradient")
+    .attr("id", "linear-gradient");
+  linearGradient
+    .attr("x1", "0%")
+    .attr("y1", "0%")
+    .attr("x2", "100%")
+    .attr("y2", "0%");
+
+  const numStops = 10;
+  for (let i = 0; i <= numStops; i++) {
+    const fraction = i / numStops;
+    linearGradient
+      .append("stop")
+      .attr("offset", `${100 * fraction}%`)
+      .attr("stop-color", heatMapColorforValue(fraction));
+  }
+
+  const legend = svg
+    .append("g")
+    .attr("transform", `translate(${width - legendWidth}, ${height + 30})`);
+  legend
+    .append("rect")
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", legendWidth)
+    .attr("height", legendHeight)
+    .style("fill", "url(#linear-gradient)");
+
+  // Legend axis
+  const lScale = d3.scaleLinear().range([0, legendWidth]);
+  lScale.domain(d3.extent(data, d => d.variance));
+  const lAxis = d3.axisBottom(lScale).ticks(5);
+  legend
+    .append("g")
+    .attr("class", "l axis")
+    .attr("transform", `translate(0, ${legendHeight})`)
+    .call(lAxis);
 }
 
 function fetchAndExecuteWithJson(
